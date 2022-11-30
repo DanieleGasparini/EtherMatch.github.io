@@ -111,7 +111,7 @@
 ]
             const Address = "0x423BeA15158929d27dc65c265d7fb94bE96D2E3C";
             window.web3 = await new Web3(window.ethereum);
-            windo   w.contract = await new window.web3.eth.Contract(ABI,Address);
+            window.contract = await new window.web3.eth.Contract(ABI,Address);
             console.log(window.contract.methods.getAddress().call());
             document.getElementById("contractArea").innerHTML = "Connected to smart contract";
           
