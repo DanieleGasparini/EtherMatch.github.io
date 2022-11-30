@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ETHER TRANSACTION DAPP</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+    <style>
+        body {
+            background-color: palevioletred;
+            font-size: 33px;
+            text-align: center;
+        }
+        button {
+            background-color: aquamarine;
+            font-size: 33px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+        button:hover {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div id ="readArea">
+        <button onclick="connectMetamask()">CONNECT METAMASK</button>
+        <p id="accountArea">Connection Status: Not connected to Metamask</p>
+        <button onclick="connectContract()">CONNECT CONTRACT</button>
+        <p id="contractArea">Connection status: Not connected to the contract</p>
+        <button onclick="getContractAccount()">GET CONTRACT ACCOUNT</button>
+        <p id = "contractAccount">Contract Acount: Not connected to the contract</p>
+        <button onclick="getBalanceHTML()">GET BALANCE OF THE CONTRACT</button>
+        <p id = "balanceArea"> Balance:NOt connected to the contract</p>
+    </div>
+   
+    <div>
+        <button onclick="depositContract()">SEND ETHER TO THE CONTRACT</button><br>
+        <input type="number" name="" id="depositInput" placeholder="Enter Amount"><br><br>
+
+        <button onclick="withdraw()">WITHDRAW ETHER FROM THE CONTRACT</button><br>
+        <input type="text" name="" id="addressInput2" placeholder="Enter Address"> <br>
+        <input type="number" name="" id="amountInput2" placeholder="Enter Amount">
+    </div>
+    
+
+    
+    <script>
+        //1- connect metamask
+        let account;
+        const connectMetamask = async () => {
+            if(window.ethereum != undefined) {
+                const accounts = await ethereum.request({method:"eth_requestAccounts"});
+                account = accounts[0];
+                document.getElementById("accountArea").innerHTML = `User Account: ${account}` ;
+            }
+        }
+    
+        //2 connect contraact
+        const connectContract = async() => {
+            //application binary interface provided by solidity compiler
+            const ABI = [
+	{
+		"inputs": [],
+		"name": "despost",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
+            const Address = "0x423BeA15158929d27dc65c265d7fb94bE96D2E3C";
+            window.web3 = await new Web3(window.ethereum);
+            windo   w.contract = await new window.web3.eth.Contract(ABI,Address);
+            console.log(window.contract.methods.getAddress().call());
+            document.getElementById("contractArea").innerHTML = "Connected to smart contract";
+          
+        }
+
+        const getContractAccount = async() => {
+            const data = await window.contract.methods.getAddress().call();
+            console.log(data);
+            document.getElementById("contractAccount").innerHTML = `Contract Account: ${data}`;
+        }
+
+        const getBalanceHTML = async() => {
+            const data = await window.contract.methods.getBalance().call();
+            document.getElementById("balanceArea").innerHTML = `Contract Balance: ${data}`;
+          
+        }
+        
+        const depositContract = async() => {
+            //Amount is in wei
+            const amount = document.getElementById("depositInput").value;
+            await window.contract.methods.despost().send({from: account,value:amount});
+          
+        }
+
+        const withdraw = async() => {
+            const amount = document.getElementById("amountInput2").value;
+            const address = document.getElementById("addressInput2").value;
+            await window.contract.methods.withdraw(address,amount).send({from: account});
+          
+        }
+    </script>
+</body>
+</html>
