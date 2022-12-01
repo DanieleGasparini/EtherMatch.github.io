@@ -109,7 +109,7 @@
 		"type": "function"
 	}
 ]
-            const Address = "0x423BeA15158929d27dc65c265d7fb94bE96D2E3C";
+            const Address = "0x168C06c715e060F0544cC1C394f1f2b962E9D830";
             window.web3 = await new Web3(window.ethereum);
             window.contract = await new window.web3.eth.Contract(ABI,Address);
             console.log(window.contract.methods.getAddress().call());
