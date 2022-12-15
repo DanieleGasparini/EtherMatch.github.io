@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shipments Table</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+</head>
+<body>
+  <h1>Shipments Table</h1>
+  <table id="shipments-table">
+    <tr>
+      <th>ID</th>
+      <th>Sender</th>
+      <th>Receiver</th>
+      <th>Status</th>
+    </tr>
+    <tr>
+      <td id="shipment-id"></td>
+      <td id="sender"></td>
+      <td id="receiver"></td>
+      <td id="status"></td>
+    </tr>
+  </table>
+  <script>
+    // Import the web3 library
+    const Web3 = require('web3');
+
+    // Set the provider that you want to use
+    const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+
+    // Get the address of the smart contract
+    const contractAddress = "0x9240dDc345D7084cC775EB65F91f7194DbBb48d8";
+
+    // Get the ABI (Application Binary Interface) of the smart contract
+    const contractABI = [
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "buyerWithdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "enum Ethership.Incoterm",
+				"name": "_selected_incoterm",
+				"type": "uint8"
+			},
+			{
+				"internalType": "address",
+				"name": "_shipper",
+				"type": "address"
+			}
+		],
+		"name": "buyShipment",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_price",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_title",
+				"type": "string"
+			}
+		],
+		"name": "createShipment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_shipperName",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_shipperAddress",
+				"type": "address"
+			}
+		],
+		"name": "createShipper",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_shipperAddress",
+				"type": "address"
+			}
+		],
+		"name": "deleteShipper",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "sellerWithdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "shipperWithdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_newOwner",
+				"type": "address"
+			}
+		],
+		"name": "updateOwner",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "enum Ethership.Status",
+				"name": "_status",
+				"type": "uint8"
+			},
+			{
+				"internalType": "string",
+				"name": "_notes",
+				"type": "string"
+			}
+		],
+		"name": "updateShipment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "allowedShippersAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "allowedShippersName",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "enum Ethership.Incoterm",
+				"name": "_incoterm",
+				"type": "uint8"
+			},
+			{
+				"internalType": "enum Ethership.Status",
+				"name": "_status",
+				"type": "uint8"
+			}
+		],
+		"name": "canBuyerWithdrawFunds",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "sellersBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "shipments",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "title",
+				"type": "string"
+			},
+			{
+				"internalType": "enum Ethership.Incoterm",
+				"name": "contracted_incoterm",
+				"type": "uint8"
+			},
+			{
+				"internalType": "enum Ethership.Status",
+				"name": "status",
+				"type": "uint8"
+			},
+			{
+				"internalType": "address",
+				"name": "seller",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "shipper",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "buyer",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "shipper_notes",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "shippersBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalShipments",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+
+    // Create an instance of the smart contract
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+    // Get the list of shipments from the smart contract
+    contract.methods.shipments().call((err, shipments) => {
+      if (err) {
+        console.log(err);
+      } else {
+        // Loop through the shipments and add them to the table
+        for (let i = 0; i < shipments.length; i++) {
+          const shipment = shipments[i];
+            // Get the values of the shipment
+            const id = shipment.id;
+            const sender = shipment.seller;
+            const receiver = shipment.buyer;
+            const status = shipment.status;
+
+            // Create a new row for the shipment
+            const row = document.createElement("tr");
+
+            // Create the cells for the shipment data
+            const idCell = document.createElement("td");
+            idCell.innerText = id;
+
+            const senderCell = document.createElement("td");
+            senderCell.innerText = sender;
+
+            const receiverCell = document.createElement("td");
+            receiverCell.innerText = receiver;
+
+            const statusCell = document.createElement("td");
+            statusCell.innerText = status;
+
+            // Append the cells to the row
+            row.appendChild(idCell);
+            row.appendChild(senderCell);
+            row.appendChild(receiverCell);
+            row.appendChild(statusCell);
+
+            // Append the row to the table
+            const table = document.getElementById("shipments-table");
+            table.appendChild(row);
+        }
+    }
+});
+</script>
+  
+</body>
+</html>
