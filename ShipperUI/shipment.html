@@ -1,0 +1,85 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shipment</title>
+  <style>
+    body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+    h1 {
+            text-align: center;
+            padding: 30px;
+            background-color: #337ab7;
+            color: white;
+        }
+        h2 {
+          font-size: 44px;
+            
+            text-align: center;
+        }
+    p {
+        font-size: 36px;
+      margin: 20px 0;
+    }
+    .positiveStatus {
+      color: green;
+      font-size: 36px;
+    }
+    .negativeStatus {
+      color: red;
+      font-size: 36px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #3728b9;
+      color: white;
+      border: none;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Shipper Name</h1>
+  <h2>Shipment 1</h2>
+  <p>
+    Status: <span id="status" class ="positiveStatus"></span><br>
+    Name: John Doe<br>
+    Address: 0x1234567890abcdef
+  </p>
+  <p>
+    <button onclick="changeVariable()">Sign Contract</button>
+  </p>
+  <script>
+    var array = ['Ordered', 'In transit', 'Delivered'];
+    var index = 0;
+    var value = array[0];
+    document.getElementById('status').innerHTML = value;
+
+    function changeVariable() {
+      var bool = confirm("Has the package been delivered?");
+      console.log(index < array.length);
+      if(index < array.length-1) {
+        if (bool) {
+          index ++;
+          document.getElementById('status').innerHTML = array[index];
+        } else {
+            var variable = document.getElementById('status');
+            variable.className = 'negativeStatus';
+        }
+      }
+      
+      
+    }
+  </script>
+</body>
+</html>
+
+
+
+</html>
